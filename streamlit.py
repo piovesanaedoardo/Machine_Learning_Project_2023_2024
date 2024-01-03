@@ -7,8 +7,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
+from sklearn.metrics import mean_squared_error, r2_score, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
@@ -120,10 +119,25 @@ if st.sidebar.checkbox('Model'):
     if st.button('Train Model'):
         if model_option == "Random Forest":
             st.session_state.model = RandomForestClassifier()
+            importances = model.feature_importances_
+            indices = np.argsort(importances)
+            features = X_train.columns
+            st.bar_chart(pd.DataFrame(importances[indices], index=features[indices]))
+
         if model_option == "SVM":
             st.session_state.model = SVC()
+            importances = model.feature_importances_
+            indices = np.argsort(importances)
+            features = X_train.columns
+            st.bar_chart(pd.DataFrame(importances[indices], index=features[indices]))
+
+
         if model_option == "AdaBoost":
             st.session_state.model = AdaBoostClassifier()
+            importances = model.feature_importances_
+            indices = np.argsort(importances)
+            features = X_train.columns
+            st.bar_chart(pd.DataFrame(importances[indices], index=features[indices]))
         
         st.session_state.model.fit(X_train, y_train)
         st.session_state.predictions = st.session_state.model.predict(X_test)
@@ -133,27 +147,22 @@ if st.sidebar.checkbox('Model'):
         st.write(f"RMSE: {rmse:.2f}")
         st.write(f"R² Score: {r2:.2f}")
 
-    # Plotting Actual vs Predicted values
-    if st.checkbox("Show Actual vs Predicted Plot") and st.session_state.predictions is not None:
-        fig, ax = plt.subplots()
-        ax.scatter(y_test, st.session_state.predictions, edgecolors=(0, 0, 0))
-        ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
-        ax.set_xlabel('Actual')
-        ax.set_ylabel('Predicted')
-        ax.set_title("Actual vs Predicted Quality")
-        st.pyplot(fig)
-
     # Show Feature Importances for Random Forest
-    if model_option == "Random Forest" and st.checkbox("Show Feature Importances"):
+    if model_option == "Random Forest" and st.checkbox("Random Forest Hyperparameter Tuning"):
         if st.session_state.model is not None:
             importances = st.session_state.model.feature_importances_
             indices = np.argsort(importances)[::-1]
-            fig, ax = plt.subplots()
-            ax.set_title("Feature Importances")
-            ax.bar(range(X_train.shape[1]), importances[indices], align="center")
-            ax.set_xticks(range(X_train.shape[1]))
-            ax.set_xticklabels(X.columns[indices], rotation=90)
-            st.pyplot(fig)
+            
+    # if model_option == "Random Forest" and st.checkbox("Show Feature Importances"):
+    #     if st.session_state.model is not None:
+    #         importances = st.session_state.model.feature_importances_
+    #         indices = np.argsort(importances)[::-1]
+    #         fig, ax = plt.subplots()
+    #         ax.set_title("Feature Importances")
+    #         ax.bar(range(X_train.shape[1]), importances[indices], align="center")
+    #         ax.set_xticks(range(X_train.shape[1]))
+    #         ax.set_xticklabels(X.columns[indices], rotation=90)
+    #         st.pyplot(fig)
 
 
             st.subheader("Random Forest Hyperparameter Tuning")
