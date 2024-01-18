@@ -80,9 +80,19 @@ st.sidebar.header('Menù')
 # Title
 st.title('Wine Quality Prediction App')
 
+# Image
+st.image('logo2.png')
+
+# Description
+st.write("""
+         Our aim is to investigate and evaluate the [“Wine Quality” dataset](https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009) 
+         found on [Kaggle.com](https://www.kaggle.com) by creating a predictive model that can accurately determine and anticipate 
+         the quality of wines based on their chemical attributes.
+        """)
+
 # ------------------------------- Dataframe Section -------------------------------
 if st.sidebar.checkbox('DataFrame'):
-    st.title('Dataframe')
+    st.header('Dataframe')
     st.write(df)
     st.write('Shape: ', df.shape)
 
@@ -113,7 +123,7 @@ if st.sidebar.checkbox('DataFrame'):
 
 # ------------------------------- Correlation Matrix section -------------------------------
 if st.sidebar.checkbox('Correlation Matrix'):
-    st.subheader('Correlation Matrix')
+    st.header('Correlation Matrix')
     sns.heatmap(df.corr(), annot=True, fmt='.1f')
     st.pyplot(plt)
 
@@ -123,7 +133,7 @@ if st.sidebar.checkbox('Correlation Matrix'):
 # ------------------------------- Model Section -------------------------------
 
 if st.sidebar.checkbox('Model'):
-    st.subheader('Model')
+    st.header('Model')
 
     # Test size
     test_size = st.slider("Test Size (%)", min_value=10, max_value=50, value=20) / 100
@@ -295,8 +305,7 @@ def get_user_input():
 
 # Main
 def main():
-    st.title("Wine Quality Prediction App")
-    st.subheader("Data Preprocessing and Model Training")
+    st.header("Try Prediction")
 
     # Getting user input
     user_input = get_user_input()  # This should be at the beginning of the main function
